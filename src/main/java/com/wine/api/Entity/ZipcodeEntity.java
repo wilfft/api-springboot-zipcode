@@ -21,8 +21,6 @@ public class ZipcodeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty
-    @NotNull
     @Column(name = "CODIGO_LOJA")
     @Enumerated(EnumType.STRING)
     private CodigoLoja codigoDaLoja;
@@ -48,11 +46,11 @@ public class ZipcodeEntity {
 	this.faixaFim = faixaFim;
     }
 
-    public @NotEmpty @NotNull CodigoLoja getCodigoDaLoja() {
+    public CodigoLoja getCodigoDaLoja() {
 	return codigoDaLoja;
     }
 
-    public void setCodigoDaLoja(@NotEmpty @NotNull CodigoLoja codigoDaLoja) {
+    public void setCodigoDaLoja(CodigoLoja codigoDaLoja) {
 	this.codigoDaLoja = codigoDaLoja;
     }
 
