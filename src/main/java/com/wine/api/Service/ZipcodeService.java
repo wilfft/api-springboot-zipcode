@@ -21,7 +21,6 @@ public class ZipcodeService {
 
     public List<ZipcodeEntity> allStores() {
 	List<ZipcodeEntity> zipcodesOrd = zip.findByOrderByFaixaInicioAsc();
-
 	return zipcodesOrd;
     }
 
@@ -43,36 +42,40 @@ public class ZipcodeService {
 		+ z.getFaixaInicio() + "\nFAIXA INICIO: " + z.getFaixaFim();
     }
 
-    public String AllowOrNot(@Valid Integer inicio, Integer fim) {
+    public String allowOrNot(@Valid Integer inicio, Integer fim) {
 	String conflito = "";
 	List<ZipcodeEntity> zips = this.allStores();
 	if (zips.size() == 0) {
 	    return "valid";
 	}
 	for (int i = 0; i < zips.size(); i++) {
+	    System.out.println("FASE 2");
 	    if (inicio > zips.get(i).getFaixaInicio() && fim > zips.get(i).getFaixaFim()) {
+		System.out.println("FASE 3");
 		conflito = "Conflito com a loja " + zips.get(i).getCodigoDaLoja() + " " + zips.get(i).getFaixaInicio()
 			+ " " + zips.get(i).getFaixaFim();
 		if (i == zips.size() - 1 && inicio > zips.get(i).getFaixaFim() && fim <= 99999999) {
-		    // System.out.println("FASE 4");
+		    System.out.println("FASE 4");
 		    return "valid";
 		}
 		continue;
 	    } else {
-		if (fim < zips.get(i).getFaixaFim()) {
+		System.out.println("FASE 5");
+		if (fim < zips.get(i).getFaixaFim() && fim < zips.get(i).getFaixaInicio() + 1) {
 		    return "valid";
 		} else
-		    conflito = "Conflito com a loja " + zips.get(i).getCodigoDaLoja() + " "
-			    + zips.get(i).getFaixaInicio() + " " + zips.get(i).getFaixaFim();
+		    System.out.println("FASE 6");
+		conflito = "Conflito com a loja " + zips.get(i).getCodigoDaLoja() + " " + zips.get(i).getFaixaInicio()
+			+ " " + zips.get(i).getFaixaFim();
 
 		return conflito;
-
 	    }
 	}
 
 	return conflito;
     }
 
+    @Transactional
     public Optional<ZipcodeEntity> getZipById(Long id) {
 	return zip.findById(id);
     }
@@ -86,32 +89,23 @@ public class ZipcodeService {
 	String conflito = "";
 	Integer inicio = zipcode.getFaixaInicio();
 	Integer fim = zipcode.getFaixaFim();
-
 	List<ZipcodeEntity> zips = this.allStores();
 	zips.removeIf(e -> e.getId() == id);
+
 	for (int i = 0; i < zips.size(); i++) {
-	    // System.out.println(inicio + ">>>" + zips.get(i).getFaixaInicio());
-	    // System.out.println(fim + ">>>" + zips.get(i).getFaixaFim());
 	    if (inicio > zips.get(i).getFaixaInicio() && fim > zips.get(i).getFaixaFim()) {
 		conflito = "Conflito com a loja " + zips.get(i).getCodigoDaLoja() + " " + zips.get(i).getFaixaInicio()
 			+ " " + zips.get(i).getFaixaFim();
-		// System.out.println(inicio + " >>> " + zips.get(i).getFaixaInicio() + " && " +
-		// fim + " >>> "
-		// + zips.get(i).getFaixaFim());
 		if (i == zips.size() - 1 && inicio > zips.get(i).getFaixaFim() && fim <= 99999999) {
-		    // System.out.println("FASE 4");
 		    return "valid";
 		}
 		continue;
 	    } else {
 		if (fim < zips.get(i).getFaixaFim() && fim < zips.get(i).getFaixaInicio() + 1) {
-		    // System.out.println(fim + "FASE 5 " + zips.get(i).getFaixaFim());
 		    return "valid";
 		} else
-
 		    conflito = "Conflito com a loja " + zips.get(i).getCodigoDaLoja() + " "
 			    + zips.get(i).getFaixaInicio() + " " + zips.get(i).getFaixaFim();
-		// System.out.println(conflito);
 		return conflito;
 
 	    }
@@ -124,13 +118,11 @@ public class ZipcodeService {
     @Transactional
     public String update(Long id, ZipcodeEntity zipcode) {
 	Optional<ZipcodeEntity> optional = zip.findById(id);
-	String falha;
+
 	if (optional.isPresent()) {
 	    ZipcodeEntity db = optional.get();
 
 	    if (this.allowUpdate(zipcode, id) == "valid") {
-		// System.out.println(" " + zipcode.getFaixaInicio() + " " +
-		// zipcode.getFaixaFim() + " " + id);
 		db.setCodigoDaLoja(zipcode.getCodigoDaLoja());
 		db.setFaixaInicio(zipcode.getFaixaInicio());
 		db.setFaixaFim(zipcode.getFaixaFim());

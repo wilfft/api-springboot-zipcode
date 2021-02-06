@@ -28,14 +28,14 @@ public class ApiController {
     @PostMapping("/cep")
     public String newZipcode(@RequestBody ZipcodeEntity zipcode) {
 	if (validatorService.ValidateZipcode(zipcode.getFaixaInicio(), zipcode.getFaixaFim())) {
-	    if (zipcodeService.AllowOrNot(zipcode.getFaixaInicio(), zipcode.getFaixaFim()) == "valid") {
+	    if (zipcodeService.allowOrNot(zipcode.getFaixaInicio(), zipcode.getFaixaFim()) == "valid") {
 		String retorno = zipcodeService.save(zipcode);
 		return retorno;
 	    }
 	} else {
 	    return "Por favor, corrija os dados";
 	}
-	return zipcodeService.AllowOrNot(zipcode.getFaixaInicio(), zipcode.getFaixaFim());
+	return zipcodeService.allowOrNot(zipcode.getFaixaInicio(), zipcode.getFaixaFim());
     }
 
     @PatchMapping("/cep/{id}")
